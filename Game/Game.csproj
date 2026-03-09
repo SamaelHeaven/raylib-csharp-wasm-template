@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <OutputType Condition="'$(Configuration)' == 'Debug'">Exe</OutputType>
+        <OutputType Condition="'$(Configuration)' == 'Release'">WinExe</OutputType>
+        <DebugSymbols Condition="'$(Configuration)' == 'Release'">false</DebugSymbols>
+        <DebugType Condition="'$(Configuration)' == 'Release'">none</DebugType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimMode>full</TrimMode>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <SelfContained>true</SelfContained>
+        <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
+        <!-- <WasmHtmlTemplate>index.html</WasmHtmlTemplate> -->
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Raylib-cs" Version="7.0.2"/>
+    </ItemGroup>
+
+    <Choose>
+        <When Condition="'$(RuntimeIdentifier)' == 'browser-wasm'">
+            <ItemGroup>
+                <PackageReference Include="Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*"/>
+                <PackageReference
+                        Include="runtime.$(NETCoreSdkPortableRuntimeIdentifier).Microsoft.DotNet.ILCompiler.LLVM"
+                        Version="10.0.0-*"
+                />
+                <DirectPInvoke Include="libc" />
+                <DirectPInvoke Include="raylib"/>
+                <NativeLibrary Include="./raylib.a"/>
+                <LinkerArg Include="-O3 -sUSE_GLFW=3 -sALLOW_MEMORY_GROWTH=1"/>
+            </ItemGroup>
+        </When>
+        <Otherwise>
+            <PropertyGroup>
+                <PublishSingleFile>true</PublishSingleFile>
+                <!-- <PublishAot>true</PublishAot> -->
+            </PropertyGroup>
+        </Otherwise>
+    </Choose>
+
+</Project>
